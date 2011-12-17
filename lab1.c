@@ -4,8 +4,6 @@
 
 #include "helpers.h"
 
-extern char **environ;
-
 int main(int argc, char *argv[])
 {
 	char *args[] = { argv[0], "execl,", "execlp,", "execle,", "execv,",
@@ -49,7 +47,7 @@ int main(int argc, char *argv[])
 				break;
 			case 6:
 				if (execve(argv[0], args, fake_env) < 0) {
-					perror("execv");
+					perror("execve");
 					exit(-1);
 				}
 				break;
