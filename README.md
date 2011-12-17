@@ -1,4 +1,4 @@
-Unix labs for 3rd year stundents
+Unix labs for 3rd year students
 ================================
 
 Compilation
