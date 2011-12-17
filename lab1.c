@@ -6,7 +6,7 @@
 
 int main(int argc, char *argv[])
 {
-	char *args[] = { argv[0], "execl,", "execlp,", "execle,", "execv,",
+	char *args[] = { argv[0], "Wow:", "execl,", "execlp,", "execle,", "execv,",
 		"execvp", "-", "execute", "a", "file", NULL };
 	char *fake_env[] = { "USER=root (haha)", NULL };
 
@@ -15,45 +15,38 @@ int main(int argc, char *argv[])
 
 		switch (type) {
 			case 1:
-				if (execl(argv[0], argv[0], "Wow!", "it works!", NULL) < 0) {
-					perror("execl");
-					exit(-1);
-				}
+				if (execl(argv[0], argv[0], "Wow!", "it works!", NULL) < 0)
+					die("execl");
 				break;
+
 			case 2:
-				if (execlp(argv[0], argv[0], "Hmm...", "You typed '2'", NULL) < 0) {
-					perror("execlp");
-					exit(-1);
-				}
+				if (execlp(argv[0], argv[0], "Hmm...", "You typed '2'", NULL) < 0)
+					die("execlp");
 				break;
+
 			case 3:
 				if (execle(argv[0], argv[0], "It's", "execle", "talking!",
-							"Note the changed $USER", NULL, fake_env) < 0) {
-					perror("execle");
-					exit(-1);
-				}
+							"Note the changed $USER", NULL, fake_env) < 0)
+					die("execle");
 				break;
+
 			case 4:
-				if (execv(argv[0], args) < 0) {
-					perror("execv");
-					exit(-1);
-				}
+				if (execv(argv[0], args + 1) < 0)
+					die("execv");
 				break;
+
 			case 5:
-				if (execvp(argv[0], args) < 0) {
-					perror("execvp");
-					exit(-1);
-				}
+				if (execvp(argv[0], args) < 0)
+					die("execvp");
 				break;
+
 			case 6:
-				if (execve(argv[0], args, fake_env) < 0) {
-					perror("execve");
-					exit(-1);
-				}
+				if (execve(argv[0], args + 1, fake_env) < 0)
+					die("execve");
 				break;
+
 			default:
 				die("Please suppy number in 1..6");
-				break;
 		}
 	} else {
 		int i;
