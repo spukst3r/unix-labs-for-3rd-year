@@ -32,6 +32,7 @@ void default_params(struct parameters *p);
 void parse_cmdline(int argc, char *argv[], struct parameters *p);
 
 int server_main();
+int sem_op(int first, int second);
 
 int main(int argc, char *argv[])
 {
@@ -177,22 +178,61 @@ void die(const char *message)
 	else
 		fprintf(stderr, "%s\n", message);
 
+	clean_up();
 	exit(-1);
 }
 
 int server_main()
 {
-	sem = semget(key, 2, IPC_CREAT | IPC_EXCL);
+	struct sembuf ops[2] = {0};
+	int cmd, tmp;
+	char *buf;
+
+	sem = semget(key, 2, IPC_CREAT | IPC_EXCL | 0640);
 	if (sem < 0)
 		die("semget");
 
-	shm = shmget(key, params.shm_size, IPC_CREAT | IPC_EXCL);
+	shm = shmget(key, params.shm_size, IPC_CREAT | IPC_EXCL | 0640);
 	if (shm < 0)
 		die("shmget");
 
+	shm_data = shmat(shm, NULL, 0);
+	if (shm_data < 0)
+		die("shmat");
+
+	sem_op(0, 1);
+
 	while (1) {
+		sem_op(-1, 0);
+		cmd = ((int*)shm_data)[0];
+		if (cmd < 0)
+			break;
+
+		buf = shm_data + sizeof(int);
+		tmp = atoi(buf);
+
+		snprintf(buf, params.shm_size, "%d", tmp * tmp);
+
+		sem_op(1, 1);
 	}
 
+	clean_up();
+
 	return 0;
+}
+
+int sem_op(int first, int second)
+{
+	struct sembuf ops[2] = {0};
+
+	ops[0].sem_num = 0;
+	ops[0].sem_op  = first;
+	ops[0].sem_flg = 0;
+
+	ops[1].sem_num = 1;
+	ops[1].sem_op  = second;
+	ops[1].sem_flg = 0;
+
+	return semop(sem, ops, 2);
 }
 
