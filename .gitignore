@@ -1,5 +1,5 @@
 *.o
-lab1
-lab2
+lab*
+!lab*.c
 lab3.server
 lab3.client
