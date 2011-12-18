@@ -3,8 +3,7 @@ Unix labs for 3rd year students
 
 ## Small Labs
 
-Compilation
------------
+### Compilation
 
 * clone repo, cd to it's direcotory
 * type `make` to compile all labs
