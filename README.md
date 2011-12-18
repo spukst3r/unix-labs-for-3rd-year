@@ -59,9 +59,11 @@ Client-Server with semaphores and shared memory
 
 #### Compilation
 
-type `cd big_lab_2; make`
+`cd big_lab_2; make`
 
 #### Usage
 
 type `./server --help` to show usage tips
+
+after starting server, launch client: `./client {some_number}`
 
