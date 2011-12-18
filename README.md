@@ -1,6 +1,8 @@
 Unix labs for 3rd year students
 ================================
 
+## Small Labs
+
 Compilation
 -----------
 
