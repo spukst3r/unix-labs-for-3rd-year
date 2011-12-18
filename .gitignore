@@ -3,3 +3,4 @@ lab*
 !lab*.c
 lab3.server
 lab3.client
+server
