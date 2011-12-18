@@ -103,7 +103,7 @@ void parse_cmdline(int argc, char *argv[], struct parameters *p)
 
 	int val, opt_index = 0, arg;
 
-	while ((val = getopt_long(argc, argv, "haM:c",
+	while ((val = getopt_long(argc, argv, "has:M:c",
 					long_options, &opt_index)) != -1) {
 
 		switch (val) {
