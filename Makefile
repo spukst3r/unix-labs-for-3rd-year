@@ -2,7 +2,7 @@ CC = gcc
 BINARIES = lab1 lab2 lab3.server lab3.client lab4.1
 SUBDIRS = big_lab_2
 
-all: ${BINARIES} ${SUBDIRS}
+all: ${BINARIES} subdirs
 
 lab1: lab1.o helpers.o
 
@@ -16,7 +16,7 @@ helpers.o: helpers.c helpers.h
 .c.o:
 	${CC} -c $^
 
-.PHONY: subdirs $(SUBDIRS)
+.PHONY: subdirs ${SUBDIRS}
 
 subdirs: ${SUBDIRS}
 
