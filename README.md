@@ -43,11 +43,11 @@ where `X` is message type, 1..3; `Y` is the message content
 
 Usage of signals, contains 2 parts:
 
-* 2 processes, when parents recieves SIGQUIT, child reports about this situation:
+1. 2 processes, when parents recieves SIGQUIT, child reports about this situation:
 
 Usage: `./lab4.1`
 
 Press C-\\ when you want to kill parent process
 
-* Signals with semantics O\_o
+2. Signals with semantics O\_o
 
