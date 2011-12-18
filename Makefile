@@ -1,7 +1,8 @@
 CC = gcc
 BINARIES = lab1 lab2 lab3.server lab3.client lab4.1
+SUBDIRS = big_lab_2
 
-all: ${BINARIES}
+all: ${BINARIES} ${SUBDIRS}
 
 lab1: lab1.o helpers.o
 
@@ -15,8 +16,18 @@ helpers.o: helpers.c helpers.h
 .c.o:
 	${CC} -c $^
 
+.PHONY: subdirs $(SUBDIRS)
+
+subdirs: ${SUBDIRS}
+
+${SUBDIRS}:
+	${MAKE} -C $@
+
 clean:
 	rm -f *.o
 	rm -f ${BINARIES}
 	rm -f *.txt
+	for dir in ${SUBDIRS}; do \
+		${MAKE} clean -C $$dir; \
+	done
 
