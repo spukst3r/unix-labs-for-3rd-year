@@ -50,3 +50,17 @@ Usage of signals, contains 2 parts:
 
 2. Signals with semantics O\_o
 
+## Big Labs
+
+### lab #2
+
+Client-Server with semaphores and shared memory
+
+#### Compilation
+
+type `cd big_lab_2; make`
+
+#### Usage
+
+type `./server --help` to show usage tips
+
