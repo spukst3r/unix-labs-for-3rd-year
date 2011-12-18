@@ -39,3 +39,15 @@ where `X` is message type, 1..3; `Y` is the message content
 * If `X` is 2, `abs(X)` is returned;
 * If `X` is 3, server exits, message is untouched
 
+### lab4
+
+Usage of signals, contains 2 parts:
+
+* 2 processes, when parents recieves SIGQUIT, child reports about this situation:
+
+Usage: `./lab4.1`
+
+Press C-\\ when you want to kill parent process
+
+* Signals with semantics O\_o
+
