@@ -23,8 +23,9 @@ subdirs: ${SUBDIRS}
 ${SUBDIRS}:
 	${MAKE} -C $@
 
+.PHONY: clean
+
 clean:
-	rm -f *.o
 	rm -f ${BINARIES}
 	rm -f *.txt
 	for dir in ${SUBDIRS}; do \
