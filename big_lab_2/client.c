@@ -13,13 +13,22 @@
 
 /* Global vars */
 int sem = -1, shm = -1;
-const int shm_size = 512;
 void *shm_data;
 key_t key;
 
-void clean_up();
-void die(const char *message);
+struct parameters {
+	char *message;
+	size_t shm_size;
+} params;
+
 int sem_op(int first, int second);
+
+void clean_up();
+void show_about();
+void default_params(struct parameters *p);
+void show_help(const char *prog_name);
+void die(const char *message);
+void parse_cmdline(int argc, char *argv[], struct parameters *p);
 
 int main(int argc, char *argv[])
 {
@@ -27,17 +36,14 @@ int main(int argc, char *argv[])
 	char *buf;
 	key = ftok("server.c", 113);
 
-	if (argc != 2) {
-		fprintf(stderr, "Usage: %s number\nEnter 'exit' instead of number to "
-				"shutdown server\n", argv[0]);
-		exit(-1);
-	}
+	default_params(&params);
+	parse_cmdline(argc, argv, &params);
 
 	sem = semget(key, 0, 0);
 	if (sem < 0)
 		die("semget");
 
-	shm = shmget(key, shm_size, 0);
+	shm = shmget(key, params.shm_size, 0);
 	if (shm < 0)
 		die("shmget");
 
@@ -45,12 +51,12 @@ int main(int argc, char *argv[])
 
 	sem_op(0, -1);
 
-	if (!strcmp(argv[1], "exit"))
+	if (!strcmp(params.message, "exit"))
 		cmd = -1;
 
 	((int*)shm_data)[0] = cmd;
 	buf = shm_data + sizeof(int);
-	snprintf(buf, shm_size, "%s", argv[1]);
+	snprintf(buf, params.shm_size, "%s", params.message);
 
 	sem_op(1, 0);
 	sem_op(-1, -1);
@@ -102,5 +108,73 @@ int sem_op(int first, int second)
 	ops[1].sem_flg = 0;
 
 	return semop(sem, ops, 2);
+}
+
+void parse_cmdline(int argc, char *argv[], struct parameters *p)
+{
+	struct option long_options[] = {
+		{ "help",         0, NULL, 'h' },
+		{ "about",        0, NULL, 'a' },
+		{ "shm-size",     1, NULL, 's' },
+		{ 0, 0, 0, 0 }
+	};
+
+	int val, opt_index = 0, arg;
+
+	while ((val = getopt_long(argc, argv, "has:",
+					long_options, &opt_index)) != -1) {
+
+		switch (val) {
+			case 'h':
+				show_help(argv[0]);
+				exit(0);
+
+			case 'a':
+				show_about();
+				exit(0);
+
+			case 's':
+				arg = atoi(optarg);
+				if (arg < 1)
+					die("Invalid shared memory size");
+
+				p->shm_size = arg;
+				break;
+
+			default:
+				show_help(argv[0]);
+				exit(-1);
+		}
+	}
+
+	if (*(argv + optind) == NULL) {
+		show_help(argv[0]);
+		exit(-1);
+	}
+
+	p->message = *(argv + optind);
+}
+
+void show_help(const char *prog_name)
+{
+	fprintf(stderr, "Usage: %s [OPTIONS] message\n"
+			"\n"
+			"Options:\n"
+			"  -a, --about          Show program and author info\n"
+			"  -h, --help           Show this help\n"
+			"  -s, --shm-size       Set shared memory size, default: 512\n"
+			"\n",
+			prog_name);
+}
+
+void show_about()
+{
+	fprintf(stderr, "Lab 2, made by Alyonka Kuzmina (062)\n");
+}
+
+void default_params(struct parameters *p)
+{
+	p->message  = NULL;
+	p->shm_size = 512;
 }
 
