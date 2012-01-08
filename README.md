@@ -65,7 +65,7 @@ Client-Server with semaphores and shared memory
 
 type `./server --help` to show usage tips
 
-after starting server, launch client: `./client {some_number}`, server will return some\_number\*\*2
+after starting server, launch client: `./client {some_number}`, server will return `some_number`\*\*2
 
 ### Lab #3
 
@@ -77,4 +77,5 @@ after starting server, launch client: `./client {some_number}`, server will retu
 
 type `./server --help` to show usage tips
 
-after starting server, launch client: `./client {some_number}`, server will return some\_number\*\*3
+after starting server, launch client: `./client {some_number}`, server will return `some_number`\*\*3
+
