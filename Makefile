@@ -1,6 +1,6 @@
 CC = gcc
 BINARIES = lab1 lab2 lab3.server lab3.client lab4.1
-SUBDIRS = big_lab_2
+SUBDIRS = big_lab_2 big_lab_3
 
 all: ${BINARIES} subdirs
 

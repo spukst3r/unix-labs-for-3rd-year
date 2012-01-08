@@ -1,15 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <errno.h>
 
 #include <unistd.h>
 #include <getopt.h>
+#include <signal.h>
+#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/ipc.h>
 #include <sys/sem.h>
 
-#define FIFO_DEFAULT_PATH "~/.kuzmina_fifo"
+#define FIFO_DEFAULT_PATH ".kuzmina_fifo"
 #define FIFO_DEFAULT_MODE 0640
 
 struct parameters {
@@ -27,12 +30,18 @@ void parse_cmdline(int argc, char *argv[], struct parameters *p);
 void die(const char *message);
 void show_help(const char *prog_name);
 void default_params(struct parameters *p);
+void sig_handler(int sig);
 
 int server_main();
 int sem_op(int first, int second);
 
 int main(int argc, char *argv[])
 {
+	struct sigaction sigact = {0};
+	sigact.sa_handler = sig_handler;
+
+	sigaction(SIGINT, &sigact, NULL);
+
 	default_params(&params);
 	parse_cmdline(argc, argv, &params);
 
@@ -100,6 +109,8 @@ void clean_up()
 	if (sem != -1)
 		if (semctl(sem, 0, IPC_RMID) < 0)
 			die("semctl");
+
+	unlink(params.fifo_path);
 }
 
 void show_help(const char *prog_name)
@@ -134,11 +145,14 @@ void die(const char *message)
 int server_main()
 {
 	int cmd, tmp;
-	char *buf;
+	char buf[128];
 
-	fifo = mkfifo(params.fifo_path, params.fifo_mode);
-	if (mkfifo < 0)
+	if (mkfifo(params.fifo_path, params.fifo_mode) < 0)
 		die("mkfifo");
+
+	fifo = open(params.fifo_path, O_RDWR);
+	if (fifo < 0)
+		die("open");
 
 	sem = semget(key, 2, IPC_CREAT | IPC_EXCL | 0640);
 	if (sem < 0)
@@ -148,14 +162,16 @@ int server_main()
 
 	while (1) {
 		sem_op(-1, 0);
-		/*cmd = ((int*)shm_data)[0];
-		if (cmd < 0)
+
+		read(fifo, buf, 128);
+
+		if (!strcmp(buf, "exit"))
 			break;
 
-		buf = shm_data + sizeof(int);
 		tmp = atoi(buf);
+		snprintf(buf, 128, "%d", tmp * tmp * tmp);
 
-		snprintf(buf, params.shm_size, "%d", tmp * tmp);*/
+		write(fifo, buf, strlen(buf) + 1);
 
 		sem_op(1, 1);
 	}
@@ -178,5 +194,17 @@ int sem_op(int first, int second)
 	ops[1].sem_flg = 0;
 
 	return semop(sem, ops, 2);
+}
+
+void sig_handler(int sig)
+{
+	switch (sig) {
+		case SIGINT:
+			fprintf(stderr, "\nCaught SIGINT, quitting...\n");
+			break;
+	}
+
+	clean_up();
+	exit(0);
 }
 
