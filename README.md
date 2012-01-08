@@ -65,5 +65,16 @@ Client-Server with semaphores and shared memory
 
 type `./server --help` to show usage tips
 
-after starting server, launch client: `./client {some_number}`
+after starting server, launch client: `./client {some_number}`, server will return some\_number\*\*2
 
+### Lab #3
+
+#### Compilation
+
+`cd big_lab_3; make`
+
+#### Usage
+
+type `./server --help` to show usage tips
+
+after starting server, launch client: `./client {some_number}`, server will return some\_number\*\*3
