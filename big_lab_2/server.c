@@ -184,7 +184,6 @@ void die(const char *message)
 
 int server_main()
 {
-	struct sembuf ops[2] = {0};
 	int cmd, tmp;
 	char *buf;
 

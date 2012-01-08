@@ -6,7 +6,7 @@
 
 int main(int argc, char *argv[])
 {
-	char *args[] = { argv[0], "Wow:", "execl,", "execlp,", "execle,", "execv,",
+	char *args[] = { argv[0], argv[0], "Wow:", "execl,", "execlp,", "execle,", "execv,",
 		"execvp", "-", "execute", "a", "file", NULL };
 	char *fake_env[] = { "USER=root (haha)", NULL };
 
@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 				break;
 
 			case 2:
-				if (execlp(argv[0], argv[0], "Hmm...", "You typed '2'", NULL) < 0)
+				if (execlp("echo", "echo", "Hmm...", "You typed '2'", NULL) < 0)
 					die("execlp");
 				break;
 
@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 				break;
 
 			case 5:
-				if (execvp(argv[0], args) < 0)
+				if (execvp("echo", args) < 0)
 					die("execvp");
 				break;
 
